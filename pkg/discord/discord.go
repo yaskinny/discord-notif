@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"regexp"
+	"strings"
 	"time"
 
 	"github.com/yaskinny/discord-notif/pkg/drone"
@@ -42,9 +44,9 @@ func (m *Message) EmbedsSetter(c models.Cli) {
 		fields []models.Field
 		err    error
 	)
+	users := os.Getenv(`DISCORD_TAGS`)
 	switch c.Kind {
 	case "pipeline":
-
 		if this := os.Getenv(`DRONE`); this == "true" {
 			var d drone.Drone
 			fields, err = SetMessage(d)
@@ -52,12 +54,42 @@ func (m *Message) EmbedsSetter(c models.Cli) {
 				fmt.Fprintf(os.Stderr, "err ~> \t %v\n", err)
 				os.Exit(1)
 			}
+			if users != "" {
+				var validIDs string
+				ids := strings.Split(users, ",")
+				r := regexp.MustCompile("^(&)?[0-9]{18}$")
+				for _, id := range ids {
+					if match := r.Match([]byte(id)); match {
+						validIDs = fmt.Sprintf("%v <@%v>", validIDs, id)
+					}
+				}
+				fields = append(fields, models.Field{
+					Name:   "Tagging",
+					Value:  validIDs,
+					Inline: "false",
+				})
+			}
 		} else if this = os.Getenv(`GITLAB_CI`); this == "true" {
 			var g gitlab.Gitlab
 			fields, err = SetMessage(g)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "err ~> \t %v\n", err)
 				os.Exit(1)
+			}
+			if users != "" {
+				var validIDs string
+				ids := strings.Split(users, ",")
+				r := regexp.MustCompile("^(&)?[0-9]{18}$")
+				for _, id := range ids {
+					if match := r.Match([]byte(id)); match {
+						validIDs = fmt.Sprintf("%v <@%v>", validIDs, id)
+					}
+				}
+				fields = append(fields, models.Field{
+					Name:   "Tagging",
+					Value:  validIDs,
+					Inline: "false",
+				})
 			}
 		} else {
 			fmt.Fprintf(os.Stderr, "Seems CI runner is not either of Gitlab or Drone!\n")
@@ -70,6 +102,21 @@ func (m *Message) EmbedsSetter(c models.Cli) {
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "err ~> \t %v\n", err)
 			os.Exit(1)
+		}
+		if users != "" {
+			var validIDs string
+			ids := strings.Split(users, ",")
+			r := regexp.MustCompile("^(&)?[0-9]{18}$")
+			for _, id := range ids {
+				if match := r.Match([]byte(id)); match {
+					validIDs = fmt.Sprintf("%v <@%v>", validIDs, id)
+				}
+			}
+			fields = append(fields, models.Field{
+				Name:   "Tagging",
+				Value:  validIDs,
+				Inline: "false",
+			})
 		}
 	}
 

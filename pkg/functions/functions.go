@@ -24,6 +24,7 @@ kind:
         script    Use in Your scripts
 environment variables:
         DISCORD_URL       Your discord bot API URL
+        DISCORD_TAGS      Comma seperated list of user/role ids to tag in notifications
         DISCORD_USERNAME  Username for Bot(Optional, default is 'Notification')
         DISCORD_AVATAR    Your discord bot avatar URL(Optional, default is a 'Sad PEPE')
         NOTIF_TAGS        Comma seperated list of environments to use in templating notifications
@@ -36,7 +37,7 @@ environment variables:
                           If This variable is not set, for each mode There is a default template and it will be used
 examples:
 pipeline -> NOTIF_FIELDS="DroneCommitAuthor,DroneCommit" discord-notif project1 pipeline start
-script -> NOTIF_FIELDS="USER,HOSTNAME,SHELL" discord-notif backup-mysql script succeed
+script -> DISCORD_TAGS='11111111111111,22222222222222,&333333333333' NOTIF_FIELDS="USER,HOSTNAME,SHELL" discord-notif backup-mysql script succeed
 `)
 }
 

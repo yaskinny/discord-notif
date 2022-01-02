@@ -1,0 +1,34 @@
+---
+stages:
+- build
+
+default:
+  tags:
+  - linux
+
+variables:
+  name: cicd
+
+start notification:
+  stage: .pre
+  script:
+  - discord-notif $name pipeline start
+
+
+dummy:
+  stage: build
+  script:
+  - pwd
+
+notification on failure:
+  stage: .post
+  when: on_failure
+  script:
+  - discord-notif $name pipeline error
+
+notification on success:
+  stage: .post
+  when: on_success
+  script:
+  - discord-notif $name pipeline succeed
+...
