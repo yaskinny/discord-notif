@@ -1,7 +1,7 @@
 package drone
 
 import (
-	"errors"
+	"fmt"
 	"os"
 	"strings"
 
@@ -88,8 +88,35 @@ func (d Drone) Setter() ([]models.Field, error) {
 	var fields []models.Field
 	droneEnvs := os.Getenv(`NOTIF_FIELDS`)
 	if droneEnvs == "" {
-		// maybe set a default base template instead of returing errors?
-		return nil, errors.New("There is not tag set to create template, please set `NOTIF_FIELDS`")
+		fmt.Fprintf(os.Stderr, "`NOTF_FIELDS` is empty, default template used.\n")
+		fields = []models.Field{
+			{
+				Name:   "Branch:",
+				Value:  DroneEnvs["DroneBranch"],
+				Inline: "false",
+			},
+			{
+				Name:   "Commit Hash:",
+				Value:  DroneEnvs["DroneCommit"],
+				Inline: "false",
+			},
+			{
+				Name:   "Author:",
+				Value:  DroneEnvs["DroneCommitAuthor"],
+				Inline: "false",
+			},
+			{
+				Name:   "Commit Message:",
+				Value:  DroneEnvs["DroneCommitMessage"],
+				Inline: "false",
+			},
+			{
+				Name:   "Repo URL:",
+				Value:  DroneEnvs["DroneRemoteUrl"],
+				Inline: "false",
+			},
+		}
+		return fields, nil
 	}
 	droneTags := strings.Split(droneEnvs, ",")
 	for _, v := range droneTags {

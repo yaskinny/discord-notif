@@ -19,6 +19,9 @@ state:
         error   It will exit with exit status code 1.
         start   just notify on starting
         succeed just notify on succeed
+kind:
+        pipeline  Use within your Gitlab CI or Drone pipeline
+        script    Use in Your scripts
 environment variables:
         DISCORD_URL       Your discord bot API URL
         DISCORD_USERNAME  Username for Bot(Optional, default is 'Notification')
@@ -30,6 +33,7 @@ environment variables:
                             if the variable name is GITLAB_USER_ID, use it like GitlabUserId
                           For scripts: only works when kind is 'script'
                             list what You want to see in template like NOTIF_TAGS='USER,HOSTNAME'
+                          If This variable is not set, for each mode There is a default template and it will be used
 examples:
 pipeline -> NOTIF_FIELDS="DroneCommitAuthor,DroneCommit" discord-notif project1 pipeline start
 script -> NOTIF_FIELDS="USER,HOSTNAME,SHELL" discord-notif backup-mysql script succeed

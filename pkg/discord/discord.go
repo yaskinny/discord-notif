@@ -7,7 +7,9 @@ import (
 	"time"
 
 	"github.com/yaskinny/discord-notif/pkg/drone"
+	"github.com/yaskinny/discord-notif/pkg/gitlab"
 	"github.com/yaskinny/discord-notif/pkg/models"
+	"github.com/yaskinny/discord-notif/pkg/script"
 )
 
 type Notif interface {
@@ -42,17 +44,33 @@ func (m *Message) EmbedsSetter(c models.Cli) {
 	)
 	switch c.Kind {
 	case "pipeline":
-		this := os.Getenv(`DRONE`)
-		if this == "true" {
+
+		if this := os.Getenv(`DRONE`); this == "true" {
 			var d drone.Drone
 			fields, err = SetMessage(d)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "err ~> \t %v\n", err)
 				os.Exit(1)
 			}
+		} else if this = os.Getenv(`GITLAB_CI`); this == "true" {
+			var g gitlab.Gitlab
+			fields, err = SetMessage(g)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "err ~> \t %v\n", err)
+				os.Exit(1)
+			}
+		} else {
+			fmt.Fprintf(os.Stderr, "Seems CI runner is not either of Gitlab or Drone!\n")
+			os.Exit(1)
 		}
-		// this = os.Getenv(`GITLAB_CI`)
 
+	case "script":
+		var s script.Script
+		fields, err = SetMessage(s)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "err ~> \t %v\n", err)
+			os.Exit(1)
+		}
 	}
 
 	switch c.State {
