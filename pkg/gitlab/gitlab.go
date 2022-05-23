@@ -167,7 +167,7 @@ func (g Gitlab) Setter() ([]models.Field, error) {
 			},
 			{
 				Name:   "Repo URL:",
-				Value:  GitlabEnvs["CiServerUrl"],
+				Value:  GitlabEnvs["CiProjectUrl"],
 				Inline: "false",
 			},
 		}
