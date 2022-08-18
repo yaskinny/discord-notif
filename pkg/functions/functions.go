@@ -42,11 +42,8 @@ script -> DISCORD_TAGS='11111111111111,22222222222222,&333333333333' NOTIF_FIELD
 }
 
 func isValidApi(url string) bool {
-	regex := regexp.MustCompile(`https:\/\/(discord|discordapp)\.com\/api\/webhooks\/[0-9]{18}\/[a-zA-Z0-9_\-]+`)
-	if match := regex.Match([]byte(url)); !match {
-		return false
-	}
-	return true
+	regex := regexp.MustCompile(`https:\/\/(discord|discordapp)\.com\/api\/webhooks\/[0-9]{18,20}\/[a-zA-Z0-9_\-]+`)
+	return regex.Match([]byte(url))
 }
 
 var (
