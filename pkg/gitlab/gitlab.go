@@ -140,14 +140,28 @@ type Gitlab struct {
 
 // goes through NOTIF_FIELDS environment variable and set the ones user set for template
 func (g Gitlab) Setter() ([]models.Field, error) {
-	var fields []models.Field
+	var (
+		fields        []models.Field
+		isTagOrBranch string
+		tagOrBranch   string
+	)
 	gitlabEnvs := os.Getenv(`NOTIF_FIELDS`)
+	// handle merge/tag/push pipelines
+	// need to check if this isn't empty since it's defined in map
+	if this, ok := GitlabEnvs["CiCommitBranch"]; ok && this != "" {
+		tagOrBranch = this
+		isTagOrBranch = "Branch"
+	} else {
+		tagOrBranch = GitlabEnvs["CiCommitTag"]
+		isTagOrBranch = "Tag"
+	}
+
 	if gitlabEnvs == "" {
 		fmt.Fprintf(os.Stderr, "`NOTF_FIELDS` is empty, default template used.\n")
 		fields = []models.Field{
 			{
-				Name:   "Branch:",
-				Value:  GitlabEnvs["CiCommitBranch"],
+				Name:   isTagOrBranch,
+				Value:  tagOrBranch,
 				Inline: "false",
 			},
 			{
