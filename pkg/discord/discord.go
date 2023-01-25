@@ -63,11 +63,7 @@ func (m *Message) EmbedsSetter(c models.Cli) {
 						validIDs = fmt.Sprintf("%v <@%v>", validIDs, id)
 					}
 				}
-				fields = append(fields, models.Field{
-					Name:   "Tagging",
-					Value:  validIDs,
-					Inline: "false",
-				})
+				m.Content = "notification for " + validIDs + "\n"
 			}
 		} else if this = os.Getenv(`GITLAB_CI`); this == "true" {
 			var g gitlab.Gitlab
@@ -85,11 +81,7 @@ func (m *Message) EmbedsSetter(c models.Cli) {
 						validIDs = fmt.Sprintf("%v <@%v>", validIDs, id)
 					}
 				}
-				fields = append(fields, models.Field{
-					Name:   "Tagging",
-					Value:  validIDs,
-					Inline: "false",
-				})
+				m.Content = "notification for " + validIDs + "\n"
 			}
 		} else {
 			fmt.Fprintf(os.Stderr, "Seems CI runner is not either of Gitlab or Drone!\n")
@@ -112,11 +104,7 @@ func (m *Message) EmbedsSetter(c models.Cli) {
 					validIDs = fmt.Sprintf("%v <@%v>", validIDs, id)
 				}
 			}
-			fields = append(fields, models.Field{
-				Name:   "Tagging",
-				Value:  validIDs,
-				Inline: "false",
-			})
+			m.Content = "notification for " + validIDs + "\n"
 		}
 	}
 
@@ -140,7 +128,7 @@ func (m *Message) EmbedsSetter(c models.Cli) {
 // create json body for notification
 func (m *Message) NotifCreator(c models.Cli) ([]byte, error) {
 	m.EmbedsSetter(c)
-	m.Content = SetContent(c)
+	m.Content += SetContent(c)
 	m.Avatar = os.Getenv(`DISCORD_AVATAR`)
 	m.Username = os.Getenv(`DISCORD_USERNAME`)
 	if m.Avatar == "" {
