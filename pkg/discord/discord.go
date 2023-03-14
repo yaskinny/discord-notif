@@ -57,7 +57,7 @@ func (m *Message) EmbedsSetter(c models.Cli) {
 			if users != "" {
 				var validIDs string
 				ids := strings.Split(users, ",")
-				r := regexp.MustCompile("^(&)?[0-9]{18}$")
+				r := regexp.MustCompile("^(&)?[0-9]{18,24}$")
 				for _, id := range ids {
 					if match := r.Match([]byte(id)); match {
 						validIDs = fmt.Sprintf("%v <@%v>", validIDs, id)
@@ -75,7 +75,7 @@ func (m *Message) EmbedsSetter(c models.Cli) {
 			if users != "" {
 				var validIDs string
 				ids := strings.Split(users, ",")
-				r := regexp.MustCompile("^(&)?[0-9]{18}$")
+				r := regexp.MustCompile("^(&)?[0-9]{18,24}$")
 				for _, id := range ids {
 					if match := r.Match([]byte(id)); match {
 						validIDs = fmt.Sprintf("%v <@%v>", validIDs, id)
@@ -98,7 +98,7 @@ func (m *Message) EmbedsSetter(c models.Cli) {
 		if users != "" {
 			var validIDs string
 			ids := strings.Split(users, ",")
-			r := regexp.MustCompile("^(&)?[0-9]{18}$")
+			r := regexp.MustCompile("^(&)?[0-9]{18,24}$")
 			for _, id := range ids {
 				if match := r.Match([]byte(id)); match {
 					validIDs = fmt.Sprintf("%v <@%v>", validIDs, id)
